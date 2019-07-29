@@ -163,3 +163,77 @@ for (var i = 0; i < adFormFieldsets.length; i++) {
 address.value = xMainPin + ', ' + yMainPin;
 
 pin.addEventListener('mouseup', onPinClick);
+
+//Валидация
+
+var adFormTitle = document.getElementById('title');
+adFormTitle.setAttribute('required', '');
+adFormTitle.setAttribute('minlength', 30);
+adFormTitle.setAttribute('maxlength', 100);
+
+var adFormPrice = document.getElementById('price');
+adFormPrice.setAttribute('required', '');
+adFormPrice.setAttribute('type', 'number');
+adFormPrice.setAttribute('max', 1000000);
+
+var adFormType = document.getElementById('type');
+
+adFormType.addEventListener('click', function () {
+  switch (adFormType.options.selectedIndex) {
+    case 0:
+      adFormPrice.setAttribute('min', 0);
+      adFormPrice.setAttribute('placeholder', '0');
+      break;
+    case 1:
+      adFormPrice.setAttribute('min', 1000);
+      adFormPrice.setAttribute('placeholder', '1 000');
+      break;
+    case 2:
+      adFormPrice.setAttribute('min', 5000);
+      adFormPrice.setAttribute('placeholder', '5 000');
+      break;
+    case 3:
+      adFormPrice.setAttribute('min', 10000);
+      adFormPrice.setAttribute('placeholder', '10 000');
+      break;
+    default:
+      adFormPrice.setAttribute('placeholder', '5 000');
+  };
+});
+
+address.setAttribute('readonly', '');
+
+var adFormTimeIn = document.getElementById('timein');
+var adFormTimeOut = document.getElementById('timeout');
+
+adFormTimeIn.addEventListener('click', function () {
+switch (adFormTimeIn.options.selectedIndex) {
+  case 0:
+    adFormTimeOut.options.selectedIndex = 0;
+    break;
+  case 1:
+    adFormTimeOut.options.selectedIndex = 1;
+    break;
+  case 2:
+    adFormTimeOut.options.selectedIndex = 2;
+    break;
+  default:
+    adFormTimeOut.options.selectedIndex = 0;
+};
+});
+
+adFormTimeOut.addEventListener('click', function () {
+switch (adFormTimeOut.options.selectedIndex) {
+  case 0:
+    adFormTimeIn.options.selectedIndex = 0;
+    break;
+  case 1:
+    adFormTimeIn.options.selectedIndex = 1;
+    break;
+  case 2:
+    adFormTimeIn.options.selectedIndex = 2;
+    break;
+  default:
+    adFormTimeIn.options.selectedIndex = 0;
+};
+});
