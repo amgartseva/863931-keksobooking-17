@@ -1,26 +1,28 @@
 'use strict';
 
+var PINS_COUNT = 8;
+
 var map = document.querySelector('.map');
 var ads = [];
 var mainPin = document.querySelector('.map__pin--main');
-var xMainPin = mainPin.offsetLeft + mainPin.clientWidth / 2;
-var yMainPin = mainPin.offsetTop + mainPin.clientHeight / 2;
 var pinsContainer = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-var fragment = document.createDocumentFragment();
+var types = ['palace', 'flat', 'house', 'bungalo'];
 
-var MAIN_PIN_MIN_X = 0;
-var MAIN_PIN_MAX_X = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
-var MAIN_PIN_MIN_Y = 0;
-var MAIN_PIN_MAX_Y = pinsContainer.offsetTop + pinsContainer.clientHeight - mainPin.clientHeight;
+var xMainPin = mainPin.offsetLeft + mainPin.clientWidth / 2;
+var yMainPin = mainPin.offsetTop + mainPin.clientHeight / 2;
+var minXMainPin = 0;
+var maxXMainPin = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
+var minYMainPin = 130;
+var maxYMainPin = 630;
 
 var adForm = document.querySelector('.ad-form');
 var adFormFieldsets = adForm.querySelectorAll('fieldset');
-var adFormTimeIn = document.querySelector('#timein');
-var adFormTimeOut = document.querySelector('#timeout');
-var adFormAddress = document.querySelector('#address');
-var adFormPrice = document.querySelector('#price');
-var adFormType = document.querySelector('#type');
+var adFormTimeIn = adForm.querySelector('#timein');
+var adFormTimeOut = adForm.querySelector('#timeout');
+var adFormAddress = adForm.querySelector('#address');
+var adFormPrice = adForm.querySelector('#price');
+var adFormType = adForm.querySelector('#type');
 
 var filterForm = document.querySelector('.map__filters');
 var mapFilterFieldset = filterForm.querySelector('.map__features');
@@ -31,69 +33,49 @@ function randomInteger(min, max) {
   return random;
 }
 
-function generateData(adsData) {
-  for (var i = 0; i < 8; i++) {
-    adsData[i] = {
-      author: 0,
-      offer: 0,
-      location: 0
-    };
-    adsData[i].author = {
-      number: 'img/avatars/user0' + (i + 1) + '.png'
-    };
-    adsData[i].offer = {
-      type: getType()
-    };
-    adsData[i].location = {
-      x: getX(),
-      y: randomInteger(130, 631)
-    };
+function generateData() {
+  var result = [];
+  for (var i = 0; i < PINS_COUNT; i++) {
+    result.push({
+      author: {
+        avatar: 'img/avatars/user0' + (i + 1) + '.png'
+      },
+      offer: {
+        type: getType()
+      },
+      location: {
+        x: randomInteger(0, pinsContainer.clientWidth),
+        y: randomInteger(minYMainPin, maxYMainPin)
+      }
+    });
   }
-}
-
-function getX() {
-  var min = pinsContainer.offsetLeft;
-  var max = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
-  return randomInteger(min, max);
+  return result;
 }
 
 function getType() {
-  var x = randomInteger(1, 5);
-  switch (x) {
-    case 1:
-      x = 'palace';
-      break;
-    case 2:
-      x = 'flat';
-      break;
-    case 3:
-      x = 'house';
-      break;
-    case 4:
-      x = 'bungalo';
-      break;
-    default:
-      x = 'bungalo';
-      break;
-  }
-  return x;
+  return types[randomInteger(0, types.length)];
+}
+
+function renderSingleElement(adElement) {
+  var newPin = pinTemplate.cloneNode(true);
+  newPin.style.left = adElement.location.x + 'px';
+  newPin.style.top = adElement.location.y + 'px';
+  newPin.firstChild.src = adElement.author.avatar;
+  newPin.firstChild.alt = adElement.offer.type;
+  return newPin;
 }
 
 function drawElements(adsElements) {
+  var fragment = document.createDocumentFragment();
   for (var i = 0; i < adsElements.length; i++) {
-    var newPin = pinTemplate.cloneNode(true);
-    newPin.style.left = adsElements[i].location.x + 'px';
-    newPin.style.top = adsElements[i].location.y + 'px';
-    newPin.firstChild.src = adsElements[i].author.number;
-    newPin.firstChild.alt = adsElements[i].offer.type;
-    fragment.appendChild(newPin);
+    fragment.appendChild(renderSingleElement(adsElements[i]));
   }
   pinsContainer.appendChild(fragment);
 }
 
 function preparePage() {
   map.classList.remove('map--faded');
-  generateData(ads);
+  ads = generateData();
   drawElements(ads);
 }
 
@@ -140,20 +122,20 @@ mainPin.addEventListener('mousedown', function (evt) {
     };
     var coordX = mainPin.offsetLeft - shift.x;
     var coordY = mainPin.offsetTop - shift.y;
-    if (coordY < MAIN_PIN_MIN_Y) {
-      mainPin.style.top = MAIN_PIN_MIN_Y + 'px';
-    } else if (coordY > MAIN_PIN_MAX_Y) {
-      mainPin.style.top = MAIN_PIN_MAX_Y + 'px';
-    } else {
-      mainPin.style.top = coordY + 'px';
+    if (coordX < minXMainPin) {
+      coordX = minXMainPin;
     }
-    if (coordX < MAIN_PIN_MIN_X) {
-      mainPin.style.left = MAIN_PIN_MIN_X + 'px';
-    } else if (coordX > MAIN_PIN_MAX_X) {
-      mainPin.style.left = MAIN_PIN_MAX_X + 'px';
-    } else {
-      mainPin.style.left = coordX + 'px';
+    if (coordX > maxXMainPin) {
+      coordX = maxXMainPin;
     }
+    if (coordY < minYMainPin) {
+      coordY = minYMainPin;
+    }
+    if (coordY > maxYMainPin) {
+      coordY = maxYMainPin;
+    }
+    mainPin.style.left = coordX + 'px';
+    mainPin.style.top = coordY + 'px';
     adFormAddress.value = coordX + ', ' + coordY;
   }
 
@@ -181,14 +163,10 @@ adFormAddress.value = xMainPin + ', ' + yMainPin;
 mainPin.addEventListener('mouseup', onPinClick);
 
 function onTypeSelectChange() {
-  var selectValue = adFormType.value;
-  var min = 5000;
-  switch (selectValue) {
+  var min = 1000;
+  switch (adFormType.value) {
     case 'bungalo':
       min = 0;
-      break;
-    case 'flat':
-      min = 1000;
       break;
     case 'house':
       min = 5000;
@@ -196,8 +174,6 @@ function onTypeSelectChange() {
     case 'palace':
       min = 10000;
       break;
-    default:
-      min = 5000;
   }
   adFormPrice.setAttribute('min', min);
   adFormPrice.setAttribute('placeholder', min);
@@ -205,34 +181,10 @@ function onTypeSelectChange() {
 
 adFormType.addEventListener('change', onTypeSelectChange);
 
-adFormTimeIn.addEventListener('click', function () {
-  switch (adFormTimeIn.options.selectedIndex) {
-    case 0:
-      adFormTimeOut.options.selectedIndex = 0;
-      break;
-    case 1:
-      adFormTimeOut.options.selectedIndex = 1;
-      break;
-    case 2:
-      adFormTimeOut.options.selectedIndex = 2;
-      break;
-    default:
-      adFormTimeOut.options.selectedIndex = 0;
-  }
+adFormTimeIn.addEventListener('change', function () {
+  adFormTimeOut.value = adFormTimeIn.value;
 });
 
-adFormTimeOut.addEventListener('click', function () {
-  switch (adFormTimeOut.options.selectedIndex) {
-    case 0:
-      adFormTimeIn.options.selectedIndex = 0;
-      break;
-    case 1:
-      adFormTimeIn.options.selectedIndex = 1;
-      break;
-    case 2:
-      adFormTimeIn.options.selectedIndex = 2;
-      break;
-    default:
-      adFormTimeIn.options.selectedIndex = 0;
-  }
+adFormTimeOut.addEventListener('change', function () {
+  adFormTimeIn.value = adFormTimeOut.value;
 });
