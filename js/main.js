@@ -1,103 +1,124 @@
 'use strict';
 
-var ads = [];
-var pin = document.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
-var mapPin = document.querySelector('.map__pins');
-var pinTemplate = document.getElementById('pin').content.querySelector('.map__pin');
+var ads = [];
+var mainPin = document.querySelector('.map__pin--main');
+var xMainPin = mainPin.offsetLeft + mainPin.clientWidth / 2;
+var yMainPin = mainPin.offsetTop + mainPin.clientHeight / 2;
+var pinsContainer = map.querySelector('.map__pins');
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var fragment = document.createDocumentFragment();
+
+var MAIN_PIN_MIN_X = 0;
+var MAIN_PIN_MAX_X = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
+var MAIN_PIN_MIN_Y = 0;
+var MAIN_PIN_MAX_Y = pinsContainer.offsetTop + pinsContainer.clientHeight - mainPin.clientHeight;
+
 var adForm = document.querySelector('.ad-form');
-var adFormFieldsets = adForm.getElementsByTagName('FIELDSET');
-var mapFilterFieldset = document.querySelector('.map__filters').querySelector('.map__features');
-var mapFilterSelects = document.querySelector('.map__filters').getElementsByTagName('SELECT');
-var xMainPin = pin.offsetLeft + pin.clientWidth / 2;
-var yMainPin = pin.offsetTop + pin.clientHeight / 2;
-var address = document.getElementById('address');
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
+var adFormTimeIn = document.querySelector('#timein');
+var adFormTimeOut = document.querySelector('#timeout');
+var adFormAddress = document.querySelector('#address');
+var adFormPrice = document.querySelector('#price');
+var adFormType = document.querySelector('#type');
+
+var filterForm = document.querySelector('.map__filters');
+var mapFilterFieldset = filterForm.querySelector('.map__features');
+var mapFilterSelects = filterForm.querySelectorAll('select');
 
 function randomInteger(min, max) {
   var random = Math.floor(Math.random() * (+max - +min)) + +min;
   return random;
 }
 
-function generateData(ads) {
+function generateData(adsData) {
   for (var i = 0; i < 8; i++) {
-    ads[i] = {
+    adsData[i] = {
       author: 0,
       offer: 0,
       location: 0
-    }
-    ads[i].author = {
-      number: "img/avatars/user0" + (i + 1) + ".png"
     };
-    ads[i].offer = {
+    adsData[i].author = {
+      number: 'img/avatars/user0' + (i + 1) + '.png'
+    };
+    adsData[i].offer = {
       type: getType()
     };
-    ads[i].location = {
+    adsData[i].location = {
       x: getX(),
       y: randomInteger(130, 631)
     };
-  };
-};
+  }
+}
 
 function getX() {
-  var min = mapPin.offsetLeft;
-  var max = mapPin.offsetLeft + mapPin.clientWidth - pin.clientWidth;
+  var min = pinsContainer.offsetLeft;
+  var max = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
   return randomInteger(min, max);
-};
+}
 
 function getType() {
   var x = randomInteger(1, 5);
   switch (x) {
     case 1:
-      return "palace"
+      x = 'palace';
       break;
     case 2:
-      return "flat"
+      x = 'flat';
       break;
     case 3:
-      return "house"
+      x = 'house';
       break;
     case 4:
-      return "bungalo"
+      x = 'bungalo';
       break;
     default:
-      "bungalo";
+      x = 'bungalo';
+      break;
   }
-};
+  return x;
+}
 
-function createDOM(ad) {
-  var newPin = pinTemplate.cloneNode(true);
-  newPin.style.left = ad.location.x + 'px';
-  newPin.style.top = ad.location.y + 'px';
-  newPin.firstChild.src = ad.author.number;
-  newPin.firstChild.alt = ad.offer.type;
-  return newPin;
-};
+function drawElements(adsElements) {
+  for (var i = 0; i < adsElements.length; i++) {
+    var newPin = pinTemplate.cloneNode(true);
+    newPin.style.left = adsElements[i].location.x + 'px';
+    newPin.style.top = adsElements[i].location.y + 'px';
+    newPin.firstChild.src = adsElements[i].author.number;
+    newPin.firstChild.alt = adsElements[i].offer.type;
+    fragment.appendChild(newPin);
+  }
+  pinsContainer.appendChild(fragment);
+}
 
-var fragment = document.createDocumentFragment();
-
-function drawElement(fragment) {
-  for (var i = 0; i < ads.length; i++) {
-    fragment.appendChild(createDOM(ads[i]));
-  };
-  mapPin.appendChild(fragment);
-};
-
-function onPinClick() {
+function preparePage() {
   map.classList.remove('map--faded');
   generateData(ads);
-  drawElement(fragment);
+  drawElements(ads);
+}
+
+function activateAdForm() {
   adForm.classList.remove('ad-form--disabled');
+  for (var j = 0; j < adFormFieldsets.length; j++) {
+    adFormFieldsets[j].removeAttribute('disabled');
+  }
+}
+
+function activateFilterForm() {
   mapFilterFieldset.removeAttribute('disabled');
   for (var i = 0; i < mapFilterSelects.length; i++) {
     mapFilterSelects[i].removeAttribute('disabled');
-  };
-  for (var i = 0; i < adFormFieldsets.length; i++) {
-    adFormFieldsets[i].removeAttribute('disabled');
-  };
-  pin.removeEventListener('mouseup', onPinClick);
-};
+  }
+}
 
-pin.addEventListener('mousedown', function (evt) {
+function onPinClick() {
+  preparePage();
+  activateFilterForm();
+  activateAdForm();
+  mainPin.removeEventListener('mouseup', onPinClick);
+}
+
+mainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
 
   var startCoords = {
@@ -117,123 +138,101 @@ pin.addEventListener('mousedown', function (evt) {
       x: moveEvt.clientX,
       y: moveEvt.clientY
     };
-    if (pin.offsetTop - shift.y < 0) {
-      pin.style.top = 0 + 'px';
-    } else if (pin.offsetTop - shift.y > mapPin.clientHeight) {
-      pin.style.top = (mapPin.clientHeight - pin.clientHeight / 2) + 'px';
+    var coordX = mainPin.offsetLeft - shift.x;
+    var coordY = mainPin.offsetTop - shift.y;
+    if (coordY < MAIN_PIN_MIN_Y) {
+      mainPin.style.top = MAIN_PIN_MIN_Y + 'px';
+    } else if (coordY > MAIN_PIN_MAX_Y) {
+      mainPin.style.top = MAIN_PIN_MAX_Y + 'px';
     } else {
-      pin.style.top = (pin.offsetTop - shift.y) + 'px';
-    };
-    if (pin.offsetLeft - shift.x < 0) {
-      pin.style.left = 0 + 'px';
-    } else if (pin.offsetLeft - shift.x > mapPin.clientWidth) {
-      pin.style.left = (mapPin.clientWidth - pin.clientWidth) + 'px';
+      mainPin.style.top = coordY + 'px';
+    }
+    if (coordX < MAIN_PIN_MIN_X) {
+      mainPin.style.left = MAIN_PIN_MIN_X + 'px';
+    } else if (coordX > MAIN_PIN_MAX_X) {
+      mainPin.style.left = MAIN_PIN_MAX_X + 'px';
     } else {
-      pin.style.left = (pin.offsetLeft - shift.x) + 'px';
-    };
-  };
+      mainPin.style.left = coordX + 'px';
+    }
+    adFormAddress.value = coordX + ', ' + coordY;
+  }
 
   function onMouseUp(upEvt) {
     upEvt.preventDefault();
-
-    getPinCoordinates();
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
-  };
+  }
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 });
-
-function getPinCoordinates() {
-  var x = pin.offsetLeft + pin.clientWidth / 2;
-  var y = pin.offsetTop + pin.clientHeight;
-  address.value = x + ', ' + y;
-};
 
 mapFilterFieldset.setAttribute('disabled', 'disabled');
 
 for (var i = 0; i < mapFilterSelects.length; i++) {
   mapFilterSelects[i].setAttribute('disabled', 'disabled');
-};
+}
 
-for (var i = 0; i < adFormFieldsets.length; i++) {
-  adFormFieldsets[i].setAttribute('disabled', 'disabled');
-};
+for (var j = 0; j < adFormFieldsets.length; j++) {
+  adFormFieldsets[j].setAttribute('disabled', 'disabled');
+}
 
-address.value = xMainPin + ', ' + yMainPin;
+adFormAddress.value = xMainPin + ', ' + yMainPin;
 
-pin.addEventListener('mouseup', onPinClick);
+mainPin.addEventListener('mouseup', onPinClick);
 
-//Валидация
-
-var adFormTitle = document.getElementById('title');
-adFormTitle.setAttribute('required', '');
-adFormTitle.setAttribute('minlength', 30);
-adFormTitle.setAttribute('maxlength', 100);
-
-var adFormPrice = document.getElementById('price');
-adFormPrice.setAttribute('required', '');
-adFormPrice.setAttribute('type', 'number');
-adFormPrice.setAttribute('max', 1000000);
-
-var adFormType = document.getElementById('type');
-
-adFormType.addEventListener('click', function () {
-  switch (adFormType.options.selectedIndex) {
-    case 0:
-      adFormPrice.setAttribute('min', 0);
-      adFormPrice.setAttribute('placeholder', '0');
+function onTypeSelectChange() {
+  var selectValue = adFormType.value;
+  var min = 5000;
+  switch (selectValue) {
+    case 'bungalo':
+      min = 0;
       break;
-    case 1:
-      adFormPrice.setAttribute('min', 1000);
-      adFormPrice.setAttribute('placeholder', '1 000');
+    case 'flat':
+      min = 1000;
       break;
-    case 2:
-      adFormPrice.setAttribute('min', 5000);
-      adFormPrice.setAttribute('placeholder', '5 000');
+    case 'house':
+      min = 5000;
       break;
-    case 3:
-      adFormPrice.setAttribute('min', 10000);
-      adFormPrice.setAttribute('placeholder', '10 000');
+    case 'palace':
+      min = 10000;
       break;
     default:
-      adFormPrice.setAttribute('placeholder', '5 000');
-  };
-});
+      min = 5000;
+  }
+  adFormPrice.setAttribute('min', min);
+  adFormPrice.setAttribute('placeholder', min);
+}
 
-address.setAttribute('readonly', '');
-
-var adFormTimeIn = document.getElementById('timein');
-var adFormTimeOut = document.getElementById('timeout');
+adFormType.addEventListener('change', onTypeSelectChange);
 
 adFormTimeIn.addEventListener('click', function () {
-switch (adFormTimeIn.options.selectedIndex) {
-  case 0:
-    adFormTimeOut.options.selectedIndex = 0;
-    break;
-  case 1:
-    adFormTimeOut.options.selectedIndex = 1;
-    break;
-  case 2:
-    adFormTimeOut.options.selectedIndex = 2;
-    break;
-  default:
-    adFormTimeOut.options.selectedIndex = 0;
-};
+  switch (adFormTimeIn.options.selectedIndex) {
+    case 0:
+      adFormTimeOut.options.selectedIndex = 0;
+      break;
+    case 1:
+      adFormTimeOut.options.selectedIndex = 1;
+      break;
+    case 2:
+      adFormTimeOut.options.selectedIndex = 2;
+      break;
+    default:
+      adFormTimeOut.options.selectedIndex = 0;
+  }
 });
 
 adFormTimeOut.addEventListener('click', function () {
-switch (adFormTimeOut.options.selectedIndex) {
-  case 0:
-    adFormTimeIn.options.selectedIndex = 0;
-    break;
-  case 1:
-    adFormTimeIn.options.selectedIndex = 1;
-    break;
-  case 2:
-    adFormTimeIn.options.selectedIndex = 2;
-    break;
-  default:
-    adFormTimeIn.options.selectedIndex = 0;
-};
+  switch (adFormTimeOut.options.selectedIndex) {
+    case 0:
+      adFormTimeIn.options.selectedIndex = 0;
+      break;
+    case 1:
+      adFormTimeIn.options.selectedIndex = 1;
+      break;
+    case 2:
+      adFormTimeIn.options.selectedIndex = 2;
+      break;
+    default:
+      adFormTimeIn.options.selectedIndex = 0;
+  }
 });
