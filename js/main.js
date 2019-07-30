@@ -45,7 +45,7 @@ function generateData() {
       },
       location: {
         x: randomInteger(0, pinsContainer.clientWidth),
-        y: randomInteger(130, 631)
+        y: randomInteger(minYMainPin, maxYMainPin)
       }
     });
   }
@@ -56,19 +56,19 @@ function getType() {
   return types[randomInteger(0, types.length)];
 }
 
-function drawSingleElement(adElement, singleFragment) {
+function renderSingleElement(adElement) {
   var newPin = pinTemplate.cloneNode(true);
   newPin.style.left = adElement.location.x + 'px';
   newPin.style.top = adElement.location.y + 'px';
   newPin.firstChild.src = adElement.author.avatar;
   newPin.firstChild.alt = adElement.offer.type;
-  singleFragment.appendChild(newPin);
+  return newPin;
 }
 
 function drawElements(adsElements) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < adsElements.length; i++) {
-    drawSingleElement(adsElements[i], fragment);
+    fragment.appendChild(renderSingleElement(adsElements[i]));
   }
   pinsContainer.appendChild(fragment);
 }
@@ -182,29 +182,9 @@ function onTypeSelectChange() {
 adFormType.addEventListener('change', onTypeSelectChange);
 
 adFormTimeIn.addEventListener('change', function () {
-  switch (adFormTimeIn.value) {
-    case '12:00':
-      adFormTimeOut.value = '12:00';
-      break;
-    case '13:00':
-      adFormTimeOut.value = '13:00';
-      break;
-    case '14:00':
-      adFormTimeOut.value = '14:00';
-      break;
-  }
+  adFormTimeOut.value = adFormTimeIn.value;
 });
 
 adFormTimeOut.addEventListener('change', function () {
-  switch (adFormTimeOut.value) {
-    case '12:00':
-      adFormTimeIn.value = '12:00';
-      break;
-    case '13:00':
-      adFormTimeIn.value = '13:00';
-      break;
-    case '14:00':
-      adFormTimeIn.value = '14:00';
-      break;
-  }
+  adFormTimeIn.value = adFormTimeOut.value;
 });
