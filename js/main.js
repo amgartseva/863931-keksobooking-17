@@ -98,6 +98,7 @@ function onPinClick() {
   activateFilterForm();
   activateAdForm();
   mainPin.removeEventListener('mouseup', onPinClick);
+  mainPin.removeEventListener('mousedown', onFirstPinClick);
 }
 
 mainPin.addEventListener('mousedown', function (evt) {
@@ -160,7 +161,11 @@ for (var j = 0; j < adFormFieldsets.length; j++) {
 
 adFormAddress.value = xMainPin + ', ' + yMainPin;
 
-mainPin.addEventListener('mouseup', onPinClick);
+mainPin.addEventListener('mousedown', onFirstPinClick)
+
+function onFirstPinClick() {
+  mainPin.addEventListener('mouseup', onPinClick);
+}
 
 function onTypeSelectChange() {
   var min = 1000;
