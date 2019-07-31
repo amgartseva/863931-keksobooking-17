@@ -175,6 +175,17 @@ mainPin.addEventListener('mousedown', function (evt) {
   function onMouseUp(upEvt) {
     upEvt.preventDefault();
     document.removeEventListener('mousemove', onMouseMove);
+    var shift = {
+      x: startCoords.x - upEvt.clientX,
+      y: startCoords.y - upEvt.clientY
+    };
+    startCoords = {
+      x: upEvt.clientX,
+      y: upEvt.clientY
+    };
+    var coordX = mainPin.offsetLeft - shift.x;
+    var coordY = mainPin.offsetTop - shift.y;
+    adFormAddress.value = coordX + ', ' + coordY;
     document.removeEventListener('mouseup', onMouseUp);
   }
   document.addEventListener('mousemove', onMouseMove);
