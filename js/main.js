@@ -95,6 +95,20 @@ function activateFilterForm() {
   }
 }
 
+function deactivateAdForm() {
+  adForm.classList.add('ad-form--disabled');
+  for (var j = 0; j < adFormFieldsets.length; j++) {
+    adFormFieldsets[j].setAttribute('disabled', 'disabled');
+  }
+}
+
+function deactivateFilterForm() {
+  mapFilterFieldset.setAttribute('disabled', 'disabled');
+  for (var i = 0; i < mapFilterSelects.length; i++) {
+    mapFilterSelects[i].setAttribute('disabled', 'disabled');
+  }
+}
+
 function clearMap() {
   var curPins = pinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
   curPins.forEach(function (item) {
@@ -104,14 +118,9 @@ function clearMap() {
 
 function deactivatePage() {
   map.classList.add('map--faded');
-  mapFilterFieldset.setAttribute('disabled', 'disabled');
-  for (var i = 0; i < mapFilterSelects.length; i++) {
-    mapFilterSelects[i].setAttribute('disabled', 'disabled');
-  }
-  adForm.classList.add('ad-form--disabled');
-  for (var j = 0; j < adFormFieldsets.length; j++) {
-    adFormFieldsets[j].setAttribute('disabled', 'disabled');
-  }
+  clearMap();
+  deactivateAdForm();
+  deactivateFilterForm();
   adFormAddress.value = xMainPin + ', ' + yMainPin;
 }
 
@@ -127,7 +136,6 @@ function onPinClick() {
 function onResetClick() {
   isPageActivated = false;
   deactivatePage();
-  clearMap();
   mainPin.style.left = xMainPin + 'px';
   mainPin.style.top = yMainPin + 'px';
 }
@@ -135,7 +143,7 @@ function onResetClick() {
 mainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
 
-  if (isPageActivated === false) {
+  if (!isPageActivated) {
     mainPin.addEventListener('mouseup', onPinClick);
   }
 
@@ -177,7 +185,6 @@ mainPin.addEventListener('mousedown', function (evt) {
 
   function onMouseUp(upEvt) {
     upEvt.preventDefault();
-    document.removeEventListener('mousemove', onMouseMove);
     var shift = {
       x: startCoords.x - upEvt.clientX,
       y: startCoords.y - upEvt.clientY
@@ -189,6 +196,7 @@ mainPin.addEventListener('mousedown', function (evt) {
     var coordX = mainPin.offsetLeft - shift.x;
     var coordY = mainPin.offsetTop - shift.y;
     adFormAddress.value = coordX + ', ' + coordY;
+    document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
   }
   document.addEventListener('mousemove', onMouseMove);
