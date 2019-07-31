@@ -116,7 +116,16 @@ function clearMap() {
   });
 }
 
+function activatePage() {
+  isPageActivated = true;
+  preparePage();
+  activateFilterForm();
+  activateAdForm();
+  adFormResetButton.addEventListener('click', onResetClick);
+}
+
 function deactivatePage() {
+  isPageActivated = false;
   map.classList.add('map--faded');
   clearMap();
   deactivateAdForm();
@@ -125,16 +134,13 @@ function deactivatePage() {
 }
 
 function onPinClick() {
-  isPageActivated = true;
-  preparePage();
-  activateFilterForm();
-  activateAdForm();
-  adFormResetButton.addEventListener('click', onResetClick);
+  if (!isPageActivated) {
+    activatePage();
+  }
   mainPin.removeEventListener('mouseup', onPinClick);
 }
 
 function onResetClick() {
-  isPageActivated = false;
   deactivatePage();
   mainPin.style.left = xMainPin + 'px';
   mainPin.style.top = yMainPin + 'px';
@@ -142,10 +148,7 @@ function onResetClick() {
 
 mainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
-
-  if (!isPageActivated) {
-    mainPin.addEventListener('mouseup', onPinClick);
-  }
+  mainPin.addEventListener('mouseup', onPinClick);
 
   var startCoords = {
     x: evt.clientX,
