@@ -2,6 +2,7 @@
 
 var PINS_COUNT = 8;
 
+var isPageActivated = false;
 var map = document.querySelector('.map');
 var ads = [];
 var mainPin = document.querySelector('.map__pin--main');
@@ -9,8 +10,8 @@ var pinsContainer = map.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var types = ['palace', 'flat', 'house', 'bungalo'];
 
-var xMainPin = mainPin.offsetLeft + mainPin.clientWidth / 2;
-var yMainPin = mainPin.offsetTop + mainPin.clientHeight / 2;
+var xMainPin = mainPin.offsetLeft;
+var yMainPin = mainPin.offsetTop;
 var minXMainPin = 0;
 var maxXMainPin = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
 var minYMainPin = 130;
@@ -23,6 +24,7 @@ var adFormTimeOut = adForm.querySelector('#timeout');
 var adFormAddress = adForm.querySelector('#address');
 var adFormPrice = adForm.querySelector('#price');
 var adFormType = adForm.querySelector('#type');
+var adFormResetButton = adForm.querySelector('.ad-form__reset');
 
 var filterForm = document.querySelector('.map__filters');
 var mapFilterFieldset = filterForm.querySelector('.map__features');
@@ -93,16 +95,46 @@ function activateFilterForm() {
   }
 }
 
+function clearMap() {
+  // должны удаляться пины c карты
+}
+
+function deactivatePage() {
+  map.classList.add('map--faded');
+  mapFilterFieldset.setAttribute('disabled', 'disabled');
+  for (var i = 0; i < mapFilterSelects.length; i++) {
+    mapFilterSelects[i].setAttribute('disabled', 'disabled');
+  }
+  adForm.classList.add('ad-form--disabled');
+  for (var j = 0; j < adFormFieldsets.length; j++) {
+    adFormFieldsets[j].setAttribute('disabled', 'disabled');
+  }
+  adFormAddress.value = xMainPin + ', ' + yMainPin;
+}
+
 function onPinClick() {
+  isPageActivated = true;
   preparePage();
   activateFilterForm();
   activateAdForm();
+  adFormResetButton.addEventListener('click', onResetClick);
   mainPin.removeEventListener('mouseup', onPinClick);
-  mainPin.removeEventListener('mousedown', onFirstPinClick);
+}
+
+function onResetClick() {
+  isPageActivated = false;
+  deactivatePage();
+  clearMap();
+  mainPin.style.left = xMainPin + 'px';
+  mainPin.style.top = yMainPin + 'px';
 }
 
 mainPin.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
+
+  if (isPageActivated === false) {
+    mainPin.addEventListener('mouseup', onPinClick);
+  }
 
   var startCoords = {
     x: evt.clientX,
@@ -149,23 +181,7 @@ mainPin.addEventListener('mousedown', function (evt) {
   document.addEventListener('mouseup', onMouseUp);
 });
 
-mapFilterFieldset.setAttribute('disabled', 'disabled');
-
-for (var i = 0; i < mapFilterSelects.length; i++) {
-  mapFilterSelects[i].setAttribute('disabled', 'disabled');
-}
-
-for (var j = 0; j < adFormFieldsets.length; j++) {
-  adFormFieldsets[j].setAttribute('disabled', 'disabled');
-}
-
-adFormAddress.value = xMainPin + ', ' + yMainPin;
-
-mainPin.addEventListener('mousedown', onFirstPinClick)
-
-function onFirstPinClick() {
-  mainPin.addEventListener('mouseup', onPinClick);
-}
+deactivatePage();
 
 function onTypeSelectChange() {
   var min = 1000;
