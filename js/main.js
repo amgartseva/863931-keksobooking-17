@@ -96,7 +96,10 @@ function activateFilterForm() {
 }
 
 function clearMap() {
-  // должны удаляться пины c карты
+  var curPins = pinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+  curPins.forEach(function (item) {
+    item.remove();
+  });
 }
 
 function deactivatePage() {
