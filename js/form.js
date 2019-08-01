@@ -1,41 +1,58 @@
-// Все взаимодействия с формой фильтрации и формой объявления
+// Форма объявления
 
 'use strict';
 
 (function () {
   var adForm = document.querySelector('.ad-form');
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
+  var adFormTimeIn = adForm.querySelector('#timein');
+  var adFormTimeOut = adForm.querySelector('#timeout');
+  var adFormPrice = adForm.querySelector('#price');
+  var adFormType = adForm.querySelector('#type');
 
-  var filterForm = document.querySelector('.map__filters');
-  var mapFilterFieldset = filterForm.querySelector('.map__features');
-  var mapFilterSelects = filterForm.querySelectorAll('select');
-
-  window.formActivateAdForm = function () {
+  function activateAdForm() {
     adForm.classList.remove('ad-form--disabled');
     for (var j = 0; j < adFormFieldsets.length; j++) {
       adFormFieldsets[j].removeAttribute('disabled');
     }
-  };
+  }
 
-  window.formActivateFilterForm = function () {
-    mapFilterFieldset.removeAttribute('disabled');
-    for (var i = 0; i < mapFilterSelects.length; i++) {
-      mapFilterSelects[i].removeAttribute('disabled');
-    }
-  };
-
-  window.formDeactivateAdForm = function () {
+  function deactivateAdForm() {
     adForm.classList.add('ad-form--disabled');
     for (var j = 0; j < adFormFieldsets.length; j++) {
       adFormFieldsets[j].setAttribute('disabled', 'disabled');
     }
-  };
+  }
 
-  window.formDeactivateFilterForm = function () {
-    mapFilterFieldset.setAttribute('disabled', 'disabled');
-    for (var i = 0; i < mapFilterSelects.length; i++) {
-      mapFilterSelects[i].setAttribute('disabled', 'disabled');
+  function onTypeSelectChange() {
+    var min = 1000;
+    switch (adFormType.value) {
+      case 'bungalo':
+        min = 0;
+        break;
+      case 'house':
+        min = 5000;
+        break;
+      case 'palace':
+        min = 10000;
+        break;
     }
-  };
+    adFormPrice.setAttribute('min', min);
+    adFormPrice.setAttribute('placeholder', min);
+  }
 
+  adFormType.addEventListener('change', onTypeSelectChange);
+
+  adFormTimeIn.addEventListener('change', function () {
+    adFormTimeOut.value = adFormTimeIn.value;
+  });
+
+  adFormTimeOut.addEventListener('change', function () {
+    adFormTimeIn.value = adFormTimeOut.value;
+  });
+
+  window.form = {
+    activate: activateAdForm,
+    deactivate: deactivateAdForm
+  };
 })();

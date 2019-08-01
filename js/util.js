@@ -1,8 +1,10 @@
 'use strict';
 
 (function () {
-  window.utilRandomInteger = function (min, max) {
+  function randomInteger(min, max) {
     var random = Math.floor(Math.random() * (+max - +min)) + +min;
     return random;
-  };
+  }
+
+  window.util = randomInteger;
 })();

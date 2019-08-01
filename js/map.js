@@ -1,21 +1,85 @@
-// Обработка событий пина
+// Взаимодействия с картой
 
 'use strict';
 
 (function () {
-  var mainPin = document.querySelector('.map__pin--main');
+  var PINS_COUNT = 8;
+
+  var isPageActivated = false;
+  var types = ['palace', 'flat', 'house', 'bungalo'];
   var map = document.querySelector('.map');
+  var mainPin = document.querySelector('.map__pin--main');
   var pinsContainer = map.querySelector('.map__pins');
+  var adForm = document.querySelector('.ad-form');
+  var adFormAddress = adForm.querySelector('#address');
+  var adFormResetButton = adForm.querySelector('.ad-form__reset');
+  var xMainPin = mainPin.offsetLeft;
+  var yMainPin = mainPin.offsetTop;
   var minXMainPin = 0;
   var maxXMainPin = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
   var minYMainPin = 130;
   var maxYMainPin = 630;
-  var adForm = document.querySelector('.ad-form');
-  var adFormAddress = adForm.querySelector('#address');
-  var adFormTimeIn = adForm.querySelector('#timein');
-  var adFormTimeOut = adForm.querySelector('#timeout');
-  var adFormPrice = adForm.querySelector('#price');
-  var adFormType = adForm.querySelector('#type');
+
+  function getType() {
+    return types[window.util(0, types.length)];
+  }
+
+  function generateData() {
+    var result = [];
+    for (var i = 0; i < PINS_COUNT; i++) {
+      result.push({
+        author: {
+          avatar: 'img/avatars/user0' + (i + 1) + '.png'
+        },
+        offer: {
+          type: getType()
+        },
+        location: {
+          x: window.util(0, pinsContainer.clientWidth),
+          y: window.util(minYMainPin, maxYMainPin)
+        }
+      });
+    }
+    return result;
+  }
+
+  function preparePage() {
+    map.classList.remove('map--faded');
+    var ads = generateData();
+    window.pin(ads);
+  }
+
+  function clearMap() {
+    var curPins = pinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+    curPins.forEach(function (item) {
+      item.remove();
+    });
+  }
+
+  function activatePage() {
+    isPageActivated = true;
+    preparePage();
+    window.form.activate();
+    window.filter.activate();
+    adFormResetButton.addEventListener('click', onResetClick);
+  }
+
+  function deactivatePage() {
+    isPageActivated = false;
+    map.classList.add('map--faded');
+    clearMap();
+    window.form.deactivate();
+    window.filter.deactivate();
+    adFormAddress.value = xMainPin + ', ' + yMainPin;
+  }
+
+  function onResetClick() {
+    deactivatePage();
+    mainPin.style.left = xMainPin + 'px';
+    mainPin.style.top = yMainPin + 'px';
+  }
+
+  deactivatePage();
 
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -58,8 +122,8 @@
 
     function onMouseUp(upEvt) {
       upEvt.preventDefault();
-      if (!window.setupIsPageActivated) {
-        window.setupActivatePage();
+      if (!isPageActivated) {
+        activatePage();
       }
       var shift = {
         x: startCoords.x - upEvt.clientX,
@@ -78,32 +142,4 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
-
-  function onTypeSelectChange() {
-    var min = 1000;
-    switch (adFormType.value) {
-      case 'bungalo':
-        min = 0;
-        break;
-      case 'house':
-        min = 5000;
-        break;
-      case 'palace':
-        min = 10000;
-        break;
-    }
-    adFormPrice.setAttribute('min', min);
-    adFormPrice.setAttribute('placeholder', min);
-  }
-
-  adFormType.addEventListener('change', onTypeSelectChange);
-
-  adFormTimeIn.addEventListener('change', function () {
-    adFormTimeOut.value = adFormTimeIn.value;
-  });
-
-  adFormTimeOut.addEventListener('change', function () {
-    adFormTimeIn.value = adFormTimeOut.value;
-  });
-
 })();

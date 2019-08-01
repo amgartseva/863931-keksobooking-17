@@ -16,11 +16,13 @@
     return newPin;
   }
 
-  window.pinDrawElements = function (adsElements) {
+  function drawElements(adsElements) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < adsElements.length; i++) {
       fragment.appendChild(renderSingleElement(adsElements[i]));
     }
     pinsContainer.appendChild(fragment);
-  };
+  }
+
+  window.pin = drawElements;
 })();
