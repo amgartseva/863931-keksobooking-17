@@ -6,5 +6,21 @@
     return random;
   }
 
-  window.util = randomInteger;
+  function activateElements(elements) {
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].removeAttribute('disabled');
+    }
+  }
+
+  function deactivateElements(elements) {
+    for (var i = 0; i < elements.length; i++) {
+      elements[i].setAttribute('disabled', 'disabled');
+    }
+  }
+
+  window.util = {
+    randomInteger: randomInteger,
+    activateElements: activateElements,
+    deactivateElements: deactivateElements
+  };
 })();

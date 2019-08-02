@@ -3,16 +3,15 @@
 'use strict';
 
 (function () {
-  var PINS_COUNT = 8;
-
   var isPageActivated = false;
-  var types = ['palace', 'flat', 'house', 'bungalo'];
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
   var pinsContainer = map.querySelector('.map__pins');
   var adForm = document.querySelector('.ad-form');
   var adFormAddress = adForm.querySelector('#address');
   var adFormResetButton = adForm.querySelector('.ad-form__reset');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var mainPage = document.querySelector('main');
   var xMainPin = mainPin.offsetLeft;
   var yMainPin = mainPin.offsetTop;
   var minXMainPin = 0;
@@ -20,33 +19,28 @@
   var minYMainPin = 130;
   var maxYMainPin = 630;
 
-  function getType() {
-    return types[window.util(0, types.length)];
-  }
-
-  function generateData() {
-    var result = [];
-    for (var i = 0; i < PINS_COUNT; i++) {
-      result.push({
-        author: {
-          avatar: 'img/avatars/user0' + (i + 1) + '.png'
-        },
-        offer: {
-          type: getType()
-        },
-        location: {
-          x: window.util(0, pinsContainer.clientWidth),
-          y: window.util(minYMainPin, maxYMainPin)
-        }
-      });
-    }
-    return result;
-  }
-
   function preparePage() {
     map.classList.remove('map--faded');
-    var ads = generateData();
-    window.pin(ads);
+    window.load(onLoadSuccess, onLoadError);
+  }
+
+  function onLoadSuccess(ads) {
+    window.pin.render(ads);
+  }
+
+  function onLoadError() {
+    var error = errorTemplate.cloneNode(true);
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(error);
+    mainPage.appendChild(fragment);
+    var errorButton = document.querySelector('.error__button');
+    errorButton.addEventListener('click', onErrorClick);
+    error.addEventListener('click', onErrorClick);
+  }
+
+  function onErrorClick(evt) {
+    evt.currentTarget.remove();
+    evt.currentTarget.removeEventListener('click', onErrorClick);
   }
 
   function clearMap() {
