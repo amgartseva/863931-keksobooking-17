@@ -12,16 +12,12 @@
 
   function activateAdForm() {
     adForm.classList.remove('ad-form--disabled');
-    for (var j = 0; j < adFormFieldsets.length; j++) {
-      adFormFieldsets[j].removeAttribute('disabled');
-    }
+    window.util.activateElements(adFormFieldsets);
   }
 
   function deactivateAdForm() {
     adForm.classList.add('ad-form--disabled');
-    for (var j = 0; j < adFormFieldsets.length; j++) {
-      adFormFieldsets[j].setAttribute('disabled', 'disabled');
-    }
+    window.util.deactivateElements(adFormFieldsets);
   }
 
   function onTypeSelectChange() {

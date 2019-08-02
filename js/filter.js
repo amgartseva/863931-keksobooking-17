@@ -9,16 +9,12 @@
 
   function activateFilterForm() {
     mapFilterFieldset.removeAttribute('disabled');
-    for (var i = 0; i < mapFilterSelects.length; i++) {
-      mapFilterSelects[i].removeAttribute('disabled');
-    }
+    window.util.activateElements(mapFilterSelects);
   }
 
   function deactivateFilterForm() {
     mapFilterFieldset.setAttribute('disabled', 'disabled');
-    for (var i = 0; i < mapFilterSelects.length; i++) {
-      mapFilterSelects[i].setAttribute('disabled', 'disabled');
-    }
+    window.util.deactivateElements(mapFilterSelects);
   }
 
   window.filter = {

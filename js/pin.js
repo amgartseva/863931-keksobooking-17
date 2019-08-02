@@ -3,6 +3,8 @@
 'use strict';
 
 (function () {
+  var PINS_COUNT = 8;
+
   var map = document.querySelector('.map');
   var pinsContainer = map.querySelector('.map__pins');
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -18,11 +20,13 @@
 
   function drawElements(adsElements) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < adsElements.length; i++) {
+    for (var i = 0; i < PINS_COUNT; i++) {
       fragment.appendChild(renderSingleElement(adsElements[i]));
     }
     pinsContainer.appendChild(fragment);
   }
 
-  window.pin = drawElements;
+  window.pin = {
+    render: drawElements
+  };
 })();
