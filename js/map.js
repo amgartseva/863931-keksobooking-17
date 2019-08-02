@@ -7,6 +7,8 @@
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
   var pinsContainer = map.querySelector('.map__pins');
+  var filterForm = document.querySelector('.map__filters');
+  var filterFormType = filterForm.querySelector('#housing-type');
   var adForm = document.querySelector('.ad-form');
   var adFormAddress = adForm.querySelector('#address');
   var adFormResetButton = adForm.querySelector('.ad-form__reset');
@@ -26,6 +28,10 @@
 
   function onLoadSuccess(ads) {
     window.pin.render(ads);
+    filterFormType.addEventListener('change', function () {
+      clearMap();
+      window.pin.render(window.pin.update(ads));
+    });
   }
 
   function onLoadError() {
