@@ -13,8 +13,8 @@
     var newPin = pinTemplate.cloneNode(true);
     newPin.style.left = adElement.location.x + 'px';
     newPin.style.top = adElement.location.y + 'px';
-    newPin.firstChild.src = adElement.author.avatar;
-    newPin.firstChild.alt = adElement.offer.type;
+    newPin.querySelector('img').src = adElement.author.avatar;
+    newPin.querySelector('img').alt = adElement.offer.type;
     return newPin;
   }
 

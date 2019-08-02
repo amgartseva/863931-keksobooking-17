@@ -41,7 +41,7 @@
   function onErrorClick(evt) {
     evt.currentTarget.remove();
     evt.currentTarget.removeEventListener('click', onErrorClick);
-  };
+  }
 
   function clearMap() {
     var curPins = pinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');

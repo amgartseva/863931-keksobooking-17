@@ -5,14 +5,14 @@
     var random = Math.floor(Math.random() * (+max - +min)) + +min;
     return random;
   }
-  
-  function activateElements (elements) {
+
+  function activateElements(elements) {
     for (var i = 0; i < elements.length; i++) {
       elements[i].removeAttribute('disabled');
     }
   }
-  
-  function deactivateElements (elements) {
+
+  function deactivateElements(elements) {
     for (var i = 0; i < elements.length; i++) {
       elements[i].setAttribute('disabled', 'disabled');
     }
