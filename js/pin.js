@@ -3,7 +3,7 @@
 'use strict';
 
 (function () {
-  var PINS_COUNT = 8;
+  var PINS_COUNT_DEFAULT = 5;
 
   var map = document.querySelector('.map');
   var pinsContainer = map.querySelector('.map__pins');
@@ -20,7 +20,7 @@
 
   function drawElements(adsElements) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < PINS_COUNT; i++) {
+    for (var i = 0; i < Math.min(adsElements.length, PINS_COUNT_DEFAULT); i++) {
       fragment.appendChild(renderSingleElement(adsElements[i]));
     }
     pinsContainer.appendChild(fragment);

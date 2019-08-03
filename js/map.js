@@ -10,12 +10,15 @@
   var adForm = document.querySelector('.ad-form');
   var adFormAddress = adForm.querySelector('#address');
   var adFormResetButton = adForm.querySelector('.ad-form__reset');
-  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var errorTemplate = document
+    .querySelector('#error')
+    .content.querySelector('.error');
   var mainPage = document.querySelector('main');
   var xMainPin = mainPin.offsetLeft;
   var yMainPin = mainPin.offsetTop;
   var minXMainPin = 0;
-  var maxXMainPin = pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
+  var maxXMainPin =
+    pinsContainer.offsetLeft + pinsContainer.clientWidth - mainPin.clientWidth;
   var minYMainPin = 130;
   var maxYMainPin = 630;
 
@@ -25,7 +28,7 @@
   }
 
   function onLoadSuccess(ads) {
-    window.pin.render(ads);
+    window.filter.init(ads);
   }
 
   function onLoadError() {
@@ -136,4 +139,8 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.map = {
+    clear: clearMap
+  };
 })();
