@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
+
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var popupPhotos = cardTemplate.querySelector('.popup__photos');
   var popupPhoto = popupPhotos.querySelector('.popup__photo');
@@ -13,7 +15,7 @@
     'house': 'Дом'
   };
 
-  function createNewFeature(adElement) {
+  function createNewFeatures(adElement) {
     var featuresFragment = document.createDocumentFragment();
     adElement.offer.features.forEach(function (item) {
       var popupOneFeature = document.createElement('LI');
@@ -23,7 +25,7 @@
     return featuresFragment;
   }
 
-  function createNewPhoto(adElement) {
+  function createNewPhotos(adElement) {
     var photosFragment = document.createDocumentFragment();
     adElement.offer.photos.forEach(function (item) {
       var popupOnePhoto = popupPhoto.cloneNode(true);
@@ -42,27 +44,35 @@
     newCard.querySelector('.popup__type').textContent = typesMap[adElement.offer.type];
     newCard.querySelector('.popup__text--capacity').textContent = adElement.offer.rooms + ' комнаты для ' + adElement.offer.guests;
     newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + adElement.offer.checkin + ', выезд до ' + adElement.offer.checkout;
-    var curFeatures = Array.from(newCard.querySelector('.popup__features').querySelectorAll('.popup__feature'));
-    curFeatures.forEach(function (it) {
-      it.remove();
-    });
-    newCard.querySelector('.popup__features').appendChild(createNewFeature(adElement));
+    var curFeatures = newCard.querySelector('.popup__features');
+    while (curFeatures.firstChild) {
+      curFeatures.removeChild(curFeatures.firstChild);
+    };
+    newCard.querySelector('.popup__features').appendChild(createNewFeatures(adElement));
     newCard.querySelector('.popup__photos').removeChild(newCard.querySelector('.popup__photos').querySelector('.popup__photo'));
-    newCard.querySelector('.popup__photos').appendChild(createNewPhoto(adElement));
+    newCard.querySelector('.popup__photos').appendChild(createNewPhotos(adElement));
 
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(newCard);
-    map.insertBefore(fragment, filtersContainer);
+    map.insertBefore(newCard, filtersContainer);
 
-
-    // добавить обработчики событий на esc
     var popupCloseButton = document.querySelector('.popup__close');
+    
     popupCloseButton.addEventListener('click', onPopupCloseClick);
+    document.addEventListener('keydown', onEscClick);
+  }
+
+  function closeCard() {
+    var curCard = document.querySelector('.map__card');
+    curCard.remove();
   }
 
   function onPopupCloseClick() {
-    var curCard = document.querySelector('.map__card');
-    curCard.remove();
+    closeCard();
+  }
+
+  function onEscClick(evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeCard();
+    }
   }
 
   window.card = {
