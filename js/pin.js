@@ -15,6 +15,9 @@
     newPin.style.top = adElement.location.y + 'px';
     newPin.querySelector('img').src = adElement.author.avatar;
     newPin.querySelector('img').alt = adElement.offer.type;
+    newPin.addEventListener('click', function () {
+      window.card.render(adElement);
+    });
     return newPin;
   }
 
