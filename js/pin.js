@@ -19,6 +19,7 @@
   }
 
   function drawElements(adsElements) {
+    window.map.clear();
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < Math.min(adsElements.length, PINS_COUNT_DEFAULT); i++) {
       fragment.appendChild(renderSingleElement(adsElements[i]));
