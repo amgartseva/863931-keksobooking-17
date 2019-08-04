@@ -15,10 +15,14 @@
     newPin.style.top = adElement.location.y + 'px';
     newPin.querySelector('img').src = adElement.author.avatar;
     newPin.querySelector('img').alt = adElement.offer.type;
+    newPin.addEventListener('click', function () {
+      window.card.render(adElement);
+    });
     return newPin;
   }
 
   function drawElements(adsElements) {
+    window.map.clear();
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < Math.min(adsElements.length, PINS_COUNT_DEFAULT); i++) {
       fragment.appendChild(renderSingleElement(adsElements[i]));
