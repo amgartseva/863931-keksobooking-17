@@ -17,6 +17,7 @@
     newPin.querySelector('img').alt = adElement.offer.type;
     newPin.addEventListener('click', function () {
       window.card.render(adElement);
+      newPin.classList.add('.map__pin--active');
     });
     return newPin;
   }
