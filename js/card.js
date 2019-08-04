@@ -3,6 +3,7 @@
 (function () {
   var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
   var popupPhotos = cardTemplate.querySelector('.popup__photos');
+  var popupPhoto = popupPhotos.querySelector('.popup__photo');
   var map = document.querySelector('.map');
   var filtersContainer = document.querySelector('.map__filters-container');
   var typesMap = {
@@ -11,6 +12,26 @@
     'bungalo': 'Бунгало',
     'house': 'Дом'
   };
+
+  function createNewFeature(adElement) {
+    var featuresFragment = document.createDocumentFragment();
+    adElement.offer.features.forEach(function (item) {
+      var popupOneFeature = document.createElement('LI');
+      popupOneFeature.className = 'popup__feature popup__feature--' + item;
+      featuresFragment.appendChild(popupOneFeature);
+    });
+    return featuresFragment;
+  }
+
+  function createNewPhoto(adElement) {
+    var photosFragment = document.createDocumentFragment();
+    adElement.offer.photos.forEach(function (item) {
+      var popupOnePhoto = popupPhoto.cloneNode(true);
+      popupOnePhoto.src = item;
+      photosFragment.appendChild(popupOnePhoto);
+    });
+    return photosFragment;
+  }
 
   function renderCard(adElement) {
     var newCard = cardTemplate.cloneNode(true);
@@ -21,37 +42,26 @@
     newCard.querySelector('.popup__type').textContent = typesMap[adElement.offer.type];
     newCard.querySelector('.popup__text--capacity').textContent = adElement.offer.rooms + ' комнаты для ' + adElement.offer.guests;
     newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + adElement.offer.checkin + ', выезд до ' + adElement.offer.checkout;
-
-    // В список .popup__features выведите все доступные удобства в объявлении.
-
-    // В блок .popup__photos выведите все фотографии из списка offer.photos. Каждая из строк массива photos должна записываться как src соответствующего изображения.
-
-    adElement.offer.photos.forEach(function (item) {
-      var newPhoto = document.createElement('IMG');
-      newPhoto.classList.add('popup__photo');
-      newPhoto.width = 45;
-      newPhoto.height = 40;
-      newPhoto.alt = 'Фотография жилья';
-      newPhoto.src = item;
-      popupPhotos.appendChild(newPhoto);
+    var curFeatures = Array.from(newCard.querySelector('.popup__features').querySelectorAll('.popup__feature'));
+    curFeatures.forEach(function (it) {
+      it.remove();
     });
+    newCard.querySelector('.popup__features').appendChild(createNewFeature(adElement));
+    newCard.querySelector('.popup__photos').removeChild(newCard.querySelector('.popup__photos').querySelector('.popup__photo'));
+    newCard.querySelector('.popup__photos').appendChild(createNewPhoto(adElement));
 
     var fragment = document.createDocumentFragment();
     fragment.appendChild(newCard);
     map.insertBefore(fragment, filtersContainer);
 
 
-    // добавить обработчики событий на esc и click по экрану
+    // добавить обработчики событий на esc
     var popupCloseButton = document.querySelector('.popup__close');
     popupCloseButton.addEventListener('click', onPopupCloseClick);
   }
 
   function onPopupCloseClick() {
     var curCard = document.querySelector('.map__card');
-    var curPhotos = Array.from(document.querySelectorAll('.popup__photo'));
-    curPhotos.forEach(function (item) {
-      item.remove();
-    });
     curCard.remove();
   }
 
