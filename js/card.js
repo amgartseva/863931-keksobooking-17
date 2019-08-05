@@ -47,7 +47,7 @@
     var curFeatures = newCard.querySelector('.popup__features');
     while (curFeatures.firstChild) {
       curFeatures.removeChild(curFeatures.firstChild);
-    };
+    }
     newCard.querySelector('.popup__features').appendChild(createNewFeatures(adElement));
     newCard.querySelector('.popup__photos').removeChild(newCard.querySelector('.popup__photos').querySelector('.popup__photo'));
     newCard.querySelector('.popup__photos').appendChild(createNewPhotos(adElement));
@@ -55,7 +55,7 @@
     map.insertBefore(newCard, filtersContainer);
 
     var popupCloseButton = document.querySelector('.popup__close');
-    
+
     popupCloseButton.addEventListener('click', onPopupCloseClick);
     document.addEventListener('keydown', onEscClick);
   }
