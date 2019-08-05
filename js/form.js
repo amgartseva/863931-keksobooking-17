@@ -3,6 +3,8 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
+
   var adForm = document.querySelector('.ad-form');
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
   var adFormTimeIn = adForm.querySelector('#timein');
@@ -11,6 +13,8 @@
   var adFormType = adForm.querySelector('#type');
   var adFormRooms = adForm.querySelector('#room_number');
   var adFormCapacity = adForm.querySelector('#capacity');
+  var mainPage = document.querySelector('main');
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
 
   var adFormCapacityOne = document.createElement('option');
   var adFormCapacityTwo = document.createElement('option');
@@ -106,6 +110,39 @@
   });
 
   adFormRooms.addEventListener('change', onRoomSelectChange);
+
+  function onUploadSuccess() {
+    window.map.deactivate();
+    adForm.reset();
+    var success = successTemplate.cloneNode(true);
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(success);
+    mainPage.appendChild(fragment);
+    success.addEventListener('click', onSuccessClick);
+    document.addEventListener('keydown', onEscSuccessClick);
+  }
+
+  function closeSuccessMessage() {
+    var successMessage = document.querySelector('.success');
+    successMessage.remove();
+  }
+
+  function onEscSuccessClick(evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeSuccessMessage();
+      evt.currentTarget.removeEventListener('keydown', onEscSuccessClick);
+    }
+  }
+
+  function onSuccessClick(evt) {
+    evt.currentTarget.remove();
+    evt.currentTarget.removeEventListener('click', onSuccessClick);
+  }
+
+  adForm.addEventListener('submit', function (evt) {
+    window.upload(new FormData(adForm), onUploadSuccess, window.util.loadError);
+    evt.preventDefault();
+  });
 
   window.form = {
     activate: activateAdForm,

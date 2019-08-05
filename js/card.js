@@ -36,6 +36,7 @@
   }
 
   function renderCard(adElement) {
+    window.card.close();
     var newCard = cardTemplate.cloneNode(true);
     newCard.querySelector('.popup__avatar').src = adElement.author.avatar;
     newCard.querySelector('.popup__title').textContent = adElement.offer.title;
@@ -62,7 +63,9 @@
 
   function closeCard() {
     var curCard = document.querySelector('.map__card');
-    curCard.remove();
+    if (curCard !== null) {
+      curCard.remove();
+    }
   }
 
   function onPopupCloseClick() {
@@ -76,6 +79,7 @@
   }
 
   window.card = {
-    render: renderCard
+    render: renderCard,
+    close: closeCard
   };
 })();

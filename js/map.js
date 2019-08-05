@@ -10,10 +10,6 @@
   var adForm = document.querySelector('.ad-form');
   var adFormAddress = adForm.querySelector('#address');
   var adFormResetButton = adForm.querySelector('.ad-form__reset');
-  var errorTemplate = document
-    .querySelector('#error')
-    .content.querySelector('.error');
-  var mainPage = document.querySelector('main');
   var xMainPin = mainPin.offsetLeft;
   var yMainPin = mainPin.offsetTop;
   var minXMainPin = 0;
@@ -24,26 +20,11 @@
 
   function preparePage() {
     map.classList.remove('map--faded');
-    window.load(onLoadSuccess, onLoadError);
+    window.load(onLoadSuccess, window.util.loadError);
   }
 
   function onLoadSuccess(ads) {
     window.filter.init(ads);
-  }
-
-  function onLoadError() {
-    var error = errorTemplate.cloneNode(true);
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(error);
-    mainPage.appendChild(fragment);
-    var errorButton = document.querySelector('.error__button');
-    errorButton.addEventListener('click', onErrorClick);
-    error.addEventListener('click', onErrorClick);
-  }
-
-  function onErrorClick(evt) {
-    evt.currentTarget.remove();
-    evt.currentTarget.removeEventListener('click', onErrorClick);
   }
 
   function clearMap() {
@@ -62,18 +43,20 @@
   }
 
   function deactivatePage() {
+    // добавить удаление карточки
     isPageActivated = false;
     map.classList.add('map--faded');
     clearMap();
+    window.card.close();
     window.form.deactivate();
     window.filter.deactivate();
+    mainPin.style.left = xMainPin + 'px';
+    mainPin.style.top = yMainPin + 'px';
     adFormAddress.value = xMainPin + ', ' + yMainPin;
   }
 
   function onResetClick() {
     deactivatePage();
-    mainPin.style.left = xMainPin + 'px';
-    mainPin.style.top = yMainPin + 'px';
   }
 
   deactivatePage();
@@ -141,6 +124,7 @@
   });
 
   window.map = {
-    clear: clearMap
+    clear: clearMap,
+    deactivate: deactivatePage
   };
 })();

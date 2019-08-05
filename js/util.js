@@ -1,6 +1,11 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
+
+  var mainPage = document.querySelector('main');
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+
   function randomInteger(min, max) {
     var random = Math.floor(Math.random() * (+max - +min)) + +min;
     return random;
@@ -18,9 +23,38 @@
     }
   }
 
+  function onLoadError() {
+    var error = errorTemplate.cloneNode(true);
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(error);
+    mainPage.appendChild(fragment);
+    var errorButton = document.querySelector('.error__button');
+    errorButton.addEventListener('click', onErrorClick);
+    error.addEventListener('click', onErrorClick);
+    document.addEventListener('keydown', onEscErrorClick);
+  }
+
+  function closeErrorMessage() {
+    var errorMessage = document.querySelector('.error');
+    errorMessage.remove();
+  }
+
+  function onEscErrorClick(evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      closeErrorMessage();
+      evt.currentTarget.removeEventListener('keydown', onEscErrorClick);
+    }
+  }
+
+  function onErrorClick(evt) {
+    evt.currentTarget.remove();
+    evt.currentTarget.removeEventListener('click', onErrorClick);
+  }
+
   window.util = {
     randomInteger: randomInteger,
     activateElements: activateElements,
-    deactivateElements: deactivateElements
+    deactivateElements: deactivateElements,
+    loadError: onLoadError
   };
 })();
