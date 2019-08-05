@@ -45,6 +45,7 @@
     newCard.querySelector('.popup__type').textContent = typesMap[adElement.offer.type];
     newCard.querySelector('.popup__text--capacity').textContent = adElement.offer.rooms + ' комнаты для ' + adElement.offer.guests;
     newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + adElement.offer.checkin + ', выезд до ' + adElement.offer.checkout;
+    newCard.querySelector('.popup__description').textContent = adElement.offer.description;
     var curFeatures = newCard.querySelector('.popup__features');
     while (curFeatures.firstChild) {
       curFeatures.removeChild(curFeatures.firstChild);
