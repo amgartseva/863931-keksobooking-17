@@ -43,7 +43,6 @@
   }
 
   function deactivatePage() {
-    // добавить удаление карточки
     isPageActivated = false;
     map.classList.add('map--faded');
     clearMap();

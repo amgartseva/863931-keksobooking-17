@@ -91,7 +91,7 @@
 
   function initPins(ads) {
     savedAds = ads;
-    window.pin.render(window.filter.getFilterAds());
+    window.util.debounce(window.pin.render(window.filter.getFilterAds()));
     filterForm.addEventListener('change', function () {
       window.card.close();
       window.pin.render(window.filter.getFilterAds());
