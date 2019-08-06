@@ -10,6 +10,7 @@
   var filterFormPrice = filterForm.querySelector('#housing-price');
   var filterFormRooms = filterForm.querySelector('#housing-rooms');
   var filterFormGuests = filterForm.querySelector('#housing-guests');
+  // var filterFormFeaturesFieldset = filterForm.querySelector('#housing-features');
   var savedAds = [];
 
   function activateFilterForm() {
@@ -25,7 +26,7 @@
   function getFilterAds() {
     var filterObj = getFilterObj();
     var result = savedAds.filter(function (item) {
-      return (item.offer.type === filterObj.type || filterObj.type === 'any');
+      return (item.offer.type === filterObj.type || filterObj.type === 'any' && item.offer.price === 'any');
     });
     return result;
   }
