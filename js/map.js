@@ -3,6 +3,8 @@
 'use strict';
 
 (function () {
+  var ENTER_KEYCODE = 13;
+
   var isPageActivated = false;
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
@@ -40,6 +42,12 @@
     window.form.activate();
     window.filter.activate();
     adFormResetButton.addEventListener('click', onResetClick);
+    adFormResetButton.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ENTER_KEYCODE) {
+        adForm.reset();
+        deactivatePage();
+      }
+    });
   }
 
   function deactivatePage() {
@@ -55,10 +63,17 @@
   }
 
   function onResetClick() {
+    adForm.reset();
     deactivatePage();
   }
 
   deactivatePage();
+
+  mainPin.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      activatePage();
+    }
+  });
 
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
