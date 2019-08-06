@@ -1,5 +1,3 @@
-// Добавление пинов
-
 'use strict';
 
 (function () {

@@ -1,5 +1,3 @@
-// Форма объявления
-
 'use strict';
 
 (function () {

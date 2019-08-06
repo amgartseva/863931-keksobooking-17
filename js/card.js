@@ -8,7 +8,7 @@
   var popupPhoto = popupPhotos.querySelector('.popup__photo');
   var map = document.querySelector('.map');
   var filtersContainer = document.querySelector('.map__filters-container');
-  var typesMap = {
+  var TypesMap = {
     'palace': 'Дворец',
     'flat': 'Квартира',
     'bungalo': 'Бунгало',
@@ -51,7 +51,7 @@
 
     newCard.querySelector('.popup__text--price').textContent = adElement.offer.price + ' ₽/ночь';
 
-    newCard.querySelector('.popup__type').textContent = typesMap[adElement.offer.type];
+    newCard.querySelector('.popup__type').textContent = TypesMap[adElement.offer.type];
 
     if (adElement.offer.rooms === 0 && adElement.offer.guests === 0) {
       newCard.querySelector('.popup__text--capacity').remove();

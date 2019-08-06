@@ -1,5 +1,3 @@
-// Форма фильтрации
-
 'use strict';
 
 (function () {
