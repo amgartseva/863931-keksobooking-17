@@ -45,7 +45,7 @@
         (filterPrice(item) || filterObj.price === 'any') &&
         (String(item.offer.rooms) === filterObj.rooms || filterObj.rooms === 'any') &&
         (String(item.offer.guests) === filterObj.guests || filterObj.guests === 'any') &&
-        (filterFeatures(item) || curFeatures.length == 0));
+        (filterFeatures(item) || curFeatures.length === 0));
     });
 
     function filterFeatures(item) {
@@ -58,7 +58,7 @@
     }
 
     function filterPrice(item) {
-      if (filterObj.price != 'any') {
+      if (filterObj.price !== 'any') {
         var filterPriceMinMax = prices[filterObj.price];
         return (item.offer.price >= filterPriceMinMax.min && item.offer.price < filterPriceMinMax.max);
       }
@@ -79,6 +79,7 @@
   }
 
   function getFilterObjFeatures() {
+    curFeatures = [];
     var allFeatures = Array.from(filterFormFeaturesFieldset.querySelectorAll('input'));
     allFeatures.forEach(function (item) {
       if (item.checked) {
