@@ -157,8 +157,19 @@
     evt.preventDefault();
   });
 
+  function formReset() {
+    if (adFormTitle.classList.contains('invalid-input')) {
+      adFormTitle.classList.remove('invalid-input');
+    }
+    if (adFormPrice.classList.contains('invalid-input')) {
+      adFormPrice.classList.remove('invalid-input');
+    }
+    adForm.reset();
+  }
+
   window.form = {
     activate: activateAdForm,
-    deactivate: deactivateAdForm
+    deactivate: deactivateAdForm,
+    reset: formReset
   };
 })();

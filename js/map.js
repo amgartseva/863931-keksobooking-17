@@ -44,7 +44,7 @@
     adFormResetButton.addEventListener('click', onResetClick);
     adFormResetButton.addEventListener('keydown', function (evt) {
       if (evt.keyCode === ENTER_KEYCODE) {
-        adForm.reset();
+        window.form.reset();
         deactivatePage();
       }
     });
@@ -63,7 +63,7 @@
   }
 
   function onResetClick() {
-    adForm.reset();
+    window.form.reset();
     deactivatePage();
   }
 
