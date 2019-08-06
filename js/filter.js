@@ -13,16 +13,16 @@
   var curFeatures = [];
   var prices = {
     low: {
-      min: 0,
-      max: 10000
+      MIN: 0,
+      MAX: 10000
     },
     middle: {
-      min: 10000,
-      max: 50000
+      MIN: 10000,
+      MAX: 50000
     },
     high: {
-      min: 50000,
-      max: Infinity
+      MIN: 50000,
+      MAX: Infinity
     }
   };
 
@@ -58,7 +58,7 @@
     function filterPrice(item) {
       if (filterObj.price !== 'any') {
         var filterPriceMinMax = prices[filterObj.price];
-        return (item.offer.price >= filterPriceMinMax.min && item.offer.price < filterPriceMinMax.max);
+        return (item.offer.price >= filterPriceMinMax.MIN && item.offer.price < filterPriceMinMax.MAX);
       }
       return false;
     }
