@@ -1,8 +1,8 @@
-// Взаимодействия с картой
-
 'use strict';
 
 (function () {
+  var ENTER_KEYCODE = 13;
+
   var isPageActivated = false;
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
@@ -40,10 +40,15 @@
     window.form.activate();
     window.filter.activate();
     adFormResetButton.addEventListener('click', onResetClick);
+    adFormResetButton.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ENTER_KEYCODE) {
+        window.form.reset();
+        deactivatePage();
+      }
+    });
   }
 
   function deactivatePage() {
-    // добавить удаление карточки
     isPageActivated = false;
     map.classList.add('map--faded');
     clearMap();
@@ -56,10 +61,17 @@
   }
 
   function onResetClick() {
+    window.form.reset();
     deactivatePage();
   }
 
   deactivatePage();
+
+  mainPin.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      activatePage();
+    }
+  });
 
   mainPin.addEventListener('mousedown', function (evt) {
     evt.preventDefault();

@@ -8,7 +8,7 @@
   var popupPhoto = popupPhotos.querySelector('.popup__photo');
   var map = document.querySelector('.map');
   var filtersContainer = document.querySelector('.map__filters-container');
-  var typesMap = {
+  var TypesMap = {
     'palace': 'Дворец',
     'flat': 'Квартира',
     'bungalo': 'Бунгало',
@@ -38,14 +38,39 @@
   function renderCard(adElement) {
     window.card.close();
     var newCard = cardTemplate.cloneNode(true);
-    newCard.querySelector('.popup__avatar').src = adElement.author.avatar;
+
+    if (adElement.author.avatar === 'img/avatars/default.png') {
+      newCard.querySelector('.popup__avatar').remove();
+    } else {
+      newCard.querySelector('.popup__avatar').src = adElement.author.avatar;
+    }
+
     newCard.querySelector('.popup__title').textContent = adElement.offer.title;
+
     newCard.querySelector('.popup__text--address').textContent = adElement.offer.address;
+
     newCard.querySelector('.popup__text--price').textContent = adElement.offer.price + ' ₽/ночь';
-    newCard.querySelector('.popup__type').textContent = typesMap[adElement.offer.type];
-    newCard.querySelector('.popup__text--capacity').textContent = adElement.offer.rooms + ' комнаты для ' + adElement.offer.guests;
-    newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + adElement.offer.checkin + ', выезд до ' + adElement.offer.checkout;
-    newCard.querySelector('.popup__description').textContent = adElement.offer.description;
+
+    newCard.querySelector('.popup__type').textContent = TypesMap[adElement.offer.type];
+
+    if (adElement.offer.rooms === 0 && adElement.offer.guests === 0) {
+      newCard.querySelector('.popup__text--capacity').remove();
+    } else {
+      newCard.querySelector('.popup__text--capacity').textContent = adElement.offer.rooms + ' комнаты для ' + adElement.offer.guests;
+    }
+
+    if (adElement.offer.checkin === '0:00' && adElement.offer.checkout === '0:00') {
+      newCard.querySelector('.popup__text--time').remove();
+    } else {
+      newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + adElement.offer.checkin + ', выезд до ' + adElement.offer.checkout;
+    }
+
+    if (adElement.offer.description === null) {
+      newCard.querySelector('.popup__description').remove();
+    } else {
+      newCard.querySelector('.popup__description').textContent = adElement.offer.description;
+    }
+
     var curFeatures = newCard.querySelector('.popup__features');
     while (curFeatures.firstChild) {
       curFeatures.removeChild(curFeatures.firstChild);

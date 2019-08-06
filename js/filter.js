@@ -1,5 +1,3 @@
-// Форма фильтрации
-
 'use strict';
 
 (function () {
@@ -10,8 +8,23 @@
   var filterFormPrice = filterForm.querySelector('#housing-price');
   var filterFormRooms = filterForm.querySelector('#housing-rooms');
   var filterFormGuests = filterForm.querySelector('#housing-guests');
-  // var filterFormFeaturesFieldset = filterForm.querySelector('#housing-features');
+  var filterFormFeaturesFieldset = filterForm.querySelector('#housing-features');
   var savedAds = [];
+  var curFeatures = [];
+  var prices = {
+    low: {
+      min: 0,
+      max: 10000
+    },
+    middle: {
+      min: 10000,
+      max: 50000
+    },
+    high: {
+      min: 50000,
+      max: Infinity
+    }
+  };
 
   function activateFilterForm() {
     mapFilterFieldset.removeAttribute('disabled');
@@ -26,8 +39,30 @@
   function getFilterAds() {
     var filterObj = getFilterObj();
     var result = savedAds.filter(function (item) {
-      return (item.offer.type === filterObj.type || filterObj.type === 'any' && item.offer.price === 'any');
+      return ((item.offer.type === filterObj.type || filterObj.type === 'any') &&
+        (filterPrice(item) || filterObj.price === 'any') &&
+        (String(item.offer.rooms) === filterObj.rooms || filterObj.rooms === 'any') &&
+        (String(item.offer.guests) === filterObj.guests || filterObj.guests === 'any') &&
+        (filterFeatures(item) || curFeatures.length === 0));
     });
+
+    function filterFeatures(item) {
+      for (var i = 0; i < filterObj.features.length; i++) {
+        if (item.offer.features.indexOf(filterObj.features[i]) === -1) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function filterPrice(item) {
+      if (filterObj.price !== 'any') {
+        var filterPriceMinMax = prices[filterObj.price];
+        return (item.offer.price >= filterPriceMinMax.min && item.offer.price < filterPriceMinMax.max);
+      }
+      return false;
+    }
+
     return result;
   }
 
@@ -37,14 +72,26 @@
       type: filterFormType.value,
       rooms: filterFormRooms.value,
       guests: filterFormGuests.value,
-      features: []
+      features: getFilterObjFeatures()
     };
+  }
+
+  function getFilterObjFeatures() {
+    curFeatures = [];
+    var allFeatures = Array.from(filterFormFeaturesFieldset.querySelectorAll('input'));
+    allFeatures.forEach(function (item) {
+      if (item.checked) {
+        curFeatures.push(item.value);
+      }
+    });
+    return curFeatures;
   }
 
   function initPins(ads) {
     savedAds = ads;
-    window.pin.render(window.filter.getFilterAds());
+    window.util.debounce(window.pin.render(window.filter.getFilterAds()));
     filterForm.addEventListener('change', function () {
+      window.card.close();
       window.pin.render(window.filter.getFilterAds());
     });
   }

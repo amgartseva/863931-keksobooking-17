@@ -2,7 +2,9 @@
 
 (function () {
   var ESC_KEYCODE = 27;
+  var DEBOUNCE_INTERVAL = 500;
 
+  var lastTimeout;
   var mainPage = document.querySelector('main');
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
@@ -51,10 +53,18 @@
     evt.currentTarget.removeEventListener('click', onErrorClick);
   }
 
+  function debounce(func) {
+    if (lastTimeout) {
+      clearTimeout(lastTimeout);
+    }
+    lastTimeout = setTimeout(func, DEBOUNCE_INTERVAL);
+  }
+
   window.util = {
     randomInteger: randomInteger,
     activateElements: activateElements,
     deactivateElements: deactivateElements,
-    loadError: onLoadError
+    loadError: onLoadError,
+    debounce: debounce
   };
 })();

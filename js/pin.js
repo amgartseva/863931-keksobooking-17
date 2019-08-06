@@ -1,9 +1,8 @@
-// Добавление пинов
-
 'use strict';
 
 (function () {
   var PINS_COUNT_DEFAULT = 5;
+  var ENTER_KEYCODE = 13;
 
   var map = document.querySelector('.map');
   var pinsContainer = map.querySelector('.map__pins');
@@ -18,6 +17,12 @@
     newPin.addEventListener('click', function () {
       window.card.render(adElement);
       newPin.classList.add('.map__pin--active');
+    });
+    newPin.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ENTER_KEYCODE) {
+        window.card.render(adElement);
+        newPin.classList.add('.map__pin--active');
+      }
     });
     return newPin;
   }

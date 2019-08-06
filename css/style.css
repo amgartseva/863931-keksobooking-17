@@ -477,6 +477,10 @@ fieldset {
 /* Форма для публикации объявления
    ========================================================================== */
 
+.invalid-input {
+  border: 2px solid red !important;
+}
+
 .notice {
   margin: 0 120px;
   padding: 30px 0;

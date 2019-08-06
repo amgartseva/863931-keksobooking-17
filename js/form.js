@@ -1,5 +1,3 @@
-// Форма объявления
-
 'use strict';
 
 (function () {
@@ -7,6 +5,7 @@
 
   var adForm = document.querySelector('.ad-form');
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
+  var adFormTitle = adForm.querySelector('#title');
   var adFormTimeIn = adForm.querySelector('#timein');
   var adFormTimeOut = adForm.querySelector('#timeout');
   var adFormPrice = adForm.querySelector('#price');
@@ -101,6 +100,10 @@
 
   adFormType.addEventListener('change', onTypeSelectChange);
 
+  adFormPrice.addEventListener('change', onInputCheckValidity);
+
+  adFormTitle.addEventListener('change', onInputCheckValidity);
+
   adFormTimeIn.addEventListener('change', function () {
     adFormTimeOut.value = adFormTimeIn.value;
   });
@@ -110,6 +113,14 @@
   });
 
   adFormRooms.addEventListener('change', onRoomSelectChange);
+
+  function onInputCheckValidity(evt) {
+    if (!evt.target.checkValidity()) {
+      evt.target.classList.add('invalid-input');
+    } else if (evt.target.classList.contains('invalid-input')) {
+      evt.target.classList.remove('invalid-input');
+    }
+  }
 
   function onUploadSuccess() {
     window.map.deactivate();
@@ -144,8 +155,19 @@
     evt.preventDefault();
   });
 
+  function formReset() {
+    if (adFormTitle.classList.contains('invalid-input')) {
+      adFormTitle.classList.remove('invalid-input');
+    }
+    if (adFormPrice.classList.contains('invalid-input')) {
+      adFormPrice.classList.remove('invalid-input');
+    }
+    adForm.reset();
+  }
+
   window.form = {
     activate: activateAdForm,
-    deactivate: deactivateAdForm
+    deactivate: deactivateAdForm,
+    reset: formReset
   };
 })();
