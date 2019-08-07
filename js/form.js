@@ -2,6 +2,7 @@
 
 (function () {
   var ESC_KEYCODE = 27;
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
   var adForm = document.querySelector('.ad-form');
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
@@ -14,6 +15,10 @@
   var adFormCapacity = adForm.querySelector('#capacity');
   var mainPage = document.querySelector('main');
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
+  var fileChooserAvatar = adForm.querySelector('#avatar');
+  var previewAvatar = adForm.querySelector('.ad-form-header__preview').querySelector('img');
+  var fileChooserPhoto = adForm.querySelector('#images');
+  var previewPhoto = adForm.querySelector('.ad-form__photo');
 
   var adFormCapacityOne = document.createElement('option');
   var adFormCapacityTwo = document.createElement('option');
@@ -153,6 +158,48 @@
   adForm.addEventListener('submit', function (evt) {
     window.upload(new FormData(adForm), onUploadSuccess, window.util.loadError);
     evt.preventDefault();
+  });
+
+  fileChooserAvatar.addEventListener('change', function () {
+    var fileAvatar = fileChooserAvatar.files[0];
+    var fileAvatarName = fileAvatar.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileAvatarName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        previewAvatar.src = reader.result;
+      });
+
+      reader.readAsDataURL(fileAvatar);
+    }
+  });
+
+  fileChooserPhoto.addEventListener('change', function () {
+    var filePhoto = fileChooserPhoto.files[0];
+    var filePhotoName = filePhoto.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return filePhotoName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        var newPhoto = document.createElement('IMG');
+        newPhoto.width = 40;
+        newPhoto.height = 44;
+        newPhoto.src = reader.result;
+        previewPhoto.appendChild(newPhoto);
+      });
+
+      reader.readAsDataURL(filePhoto);
+    }
   });
 
   function formReset() {
