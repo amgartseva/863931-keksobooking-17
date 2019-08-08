@@ -209,6 +209,11 @@
     if (adFormPrice.classList.contains('invalid-input')) {
       adFormPrice.classList.remove('invalid-input');
     }
+    previewAvatar.src = 'img/muffin-grey.svg';
+    var curPhoto = previewPhoto.querySelector('IMG');
+    if (curPhoto !== 'undefined') {
+      curPhoto.remove();
+    }
     adForm.reset();
   }
 
